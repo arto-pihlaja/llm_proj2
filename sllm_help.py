@@ -5,6 +5,7 @@ conf.read('config.ini')
 OPENAI_API_KEY=conf['openai']['api_key']  
 PC_API_KEY=conf['pinecone']['api_key']  
 PC_ENV=conf['pinecone']['environment'] 
+SA_KEY =conf['serpapi']['serpapi_key']
 
 
 from langchain.document_loaders import TextLoader

@@ -5,6 +5,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 import pinecone
 from langchain.agents import Tool
+from langchain.utilities import SerpAPIWrapper
 from langchain.vectorstores import Pinecone
 from langchain.chains import RetrievalQA    
 import os    
@@ -118,7 +119,7 @@ class Sallemi:
             chain_type='stuff',
             retriever=self.vectorstore.as_retriever()
         )
-    
+        search = SerpAPIWrapper(serpapi_api_key=sh.SA_KEY, search_engine='google')
         self.tools =[
             Tool(
                 name='SievoKb',
@@ -127,7 +128,12 @@ class Sallemi:
                     'use this tool when answering general knowledge queries to get '
                     'more information about the topic'
                 )
-            )
+            ),
+            Tool(
+                name='Lmgtfy',
+                func=search.run,
+                description='useful for when you need to answer questions about current events'
+                )
         ] 
 
 
