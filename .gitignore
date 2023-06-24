@@ -63,6 +63,7 @@ pip-delete-this-directory.txt
 /data/
 .chroma/
 /temp
+/pickles
 
 
 # vim
