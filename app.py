@@ -1,7 +1,6 @@
 from sallemi import Sallemi, sh
 from pinecone import PineconeException
 from uuid import uuid4
-from pickle import PicklingError
 
 
 def return_ugly_error(msg):
@@ -34,7 +33,9 @@ class Chat:
                     self.sllm
                 except AttributeError:
                     self.sllm = Sallemi(self.temp) 
-            if self.sllm.agent == None:                                   
+            try:
+                self.sllm.agent
+            except AttributeError:                                   
                 self.sllm.start_agent()              
 
             resp = self.sllm.agent(userText)
