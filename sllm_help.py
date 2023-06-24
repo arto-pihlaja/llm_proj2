@@ -1,13 +1,52 @@
-import configparser
-conf = configparser.ConfigParser()
-conf.read('config.ini')
 
-OPENAI_API_KEY=conf['openai']['api_key']  
-PC_API_KEY=conf['pinecone']['api_key']  
-PC_ENV=conf['pinecone']['environment'] 
-SA_KEY =conf['serpapi']['serpapi_key']
-G_KEY =conf['google']['google_api_key'] 
-G_CSE =conf['google']['google_cse_id'] 
+from azure.keyvault.secrets import SecretClient
+from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
+# https://learn.microsoft.com/en-us/azure/key-vault/secrets/quick-create-python?tabs=azure-cli
+
+def get_azure_secrets():
+    keyVaultName = 'kv-artodev'
+    kvUrl = f'https://{keyVaultName}.vault.azure.net'
+    credential = DefaultAzureCredential()
+    client = SecretClient(vault_url=kvUrl, credential=credential)
+    try:
+        OPENAI_API_KEY=client.get_secret('openai-api-key').value
+        PC_API_KEY=client.get_secret('pinecone-api-key').value
+        PC_ENV=client.get_secret('pinecone-environment').value
+        G_KEY=client.get_secret('google-api-key').value
+        G_CSE=client.get_secret('google-cse-id').value
+    except HttpResponseError as e:
+        print('Failed to retrieve.')
+        print(e.__str__())
+        raise e
+    sec ={'openai_api_key': OPENAI_API_KEY,
+          'pc_api_key': PC_API_KEY,
+          'pc_env': PC_ENV,
+          'g_api_key': G_KEY,
+          'g_cse': G_CSE
+          }
+    return sec
+
+
+import configparser
+def get_local_secrets():
+    conf = configparser.ConfigParser()
+    conf.read('config.ini')
+
+    OPENAI_API_KEY=conf['openai']['api_key']  
+    PC_API_KEY=conf['pinecone']['api_key']  
+    PC_ENV=conf['pinecone']['environment'] 
+    SA_KEY =conf['serpapi']['serpapi_key']
+    G_KEY =conf['google']['google_api_key'] 
+    G_CSE =conf['google']['google_cse_id'] 
+    sec ={'openai_api_key': OPENAI_API_KEY,
+          'pc_api_key': PC_API_KEY,
+          'pc_env': PC_ENV,
+          'g_api_key': G_KEY,
+          'g_cse': G_CSE
+          }
+    return sec
+
 index_name = 'langchain-retrieval-agent'
 
 from langchain.document_loaders import TextLoader
