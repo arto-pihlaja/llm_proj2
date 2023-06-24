@@ -12,22 +12,29 @@ index_name = 'langchain-retrieval-agent'
 
 class Sallemi:    
     def __init__(self, temp, cd: sh.Chatdata=None) -> None:
-        if cd:
-            self.temp = cd.temp
-            self.emb = cd.emb
-            self.define_vectorstore()
-            self.conv_memory = cd.conv_memory
-            self.llm = cd.model
-            self.define_tools()
-            self.agent = None  
-        else:         
+        try:
+            if cd:
+                self.temp = cd.temp
+                self.emb = cd.emb
+                self.define_vectorstore()
+                self.conv_memory = cd.conv_memory
+                self.llm = cd.model
+                self.define_tools() 
+            else:         
+                self.temp = temp
+                self.emb = sh.Embedder()
+                self.define_vectorstore()
+                self.create_conversation_memory()
+                self.define_model()
+                self.define_tools()
+        except AttributeError: 
+            #incorrect cd
             self.temp = temp
             self.emb = sh.Embedder()
             self.define_vectorstore()
             self.create_conversation_memory()
             self.define_model()
             self.define_tools()
-            self.agent = None
 
     def restore(self, cd: sh.Chatdata):
         self.temp = cd.temp
@@ -39,12 +46,9 @@ class Sallemi:
         self.agent = None
 
     def define_vectorstore(self):
-        # Add to index. 
-        # Here using Pinecone client type of index.
-        # self.index = pinecone.GRPCIndex(index_name)
         pinecone.init(
-            api_key=sh.PC_API_KEY,
-            environment=sh.PC_ENV
+            api_key=sh.sec.get('pc_api_key'),  
+            environment=sh.sec.get('pc_env')
         )
 
         # Specify in which field the actual text chunks are
@@ -68,7 +72,7 @@ class Sallemi:
             chain_type='stuff',
             retriever=self.vectorstore.as_retriever()
         )
-        search = GoogleSearchAPIWrapper(google_api_key=sh.G_KEY, google_cse_id=sh.G_CSE)
+        search = GoogleSearchAPIWrapper(google_api_key=sh.sec.get('g_api_key'), google_cse_id=sh.sec.get('g_cse'))
 #        search = SerpAPIWrapper(serpapi_api_key=sh.SA_KEY)
         self.tools =[
             Tool(
@@ -90,7 +94,7 @@ class Sallemi:
     def define_model(self):
     # Specify the chat model 
         self.llm = ChatOpenAI(
-            openai_api_key=sh.OPENAI_API_KEY,
+            openai_api_key=sh.sec.get('openai_api_key'),
             model_name='gpt-3.5-turbo',
             temperature=self.temp
         )

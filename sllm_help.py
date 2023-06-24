@@ -27,7 +27,6 @@ def get_azure_secrets():
           }
     return sec
 
-
 import configparser
 def get_local_secrets():
     conf = configparser.ConfigParser()
@@ -47,6 +46,8 @@ def get_local_secrets():
           }
     return sec
 
+#sec = get_azure_secrets()
+sec = get_local_secrets()
 index_name = 'langchain-retrieval-agent'
 
 from langchain.document_loaders import TextLoader
@@ -106,7 +107,7 @@ class Embedder:
     def __init__(self) -> None:
         self.embedder = OpenAIEmbeddings(
             model='text-embedding-ada-002',
-            openai_api_key=OPENAI_API_KEY
+            openai_api_key=sec.get('openai_api_key')
         )
 
     def create_embeddings(self, txts):    
@@ -208,8 +209,8 @@ def cleanup_pickles():
     pickles = os.listdir('./pickles')
     for pk in pickles:
         pkpath = os.path.join('./pickles', pk)
-        if time.time() - os.path.getmtime(pkpath) > 4*3600:
-            # delete files older than 4 hours
+        if time.time() - os.path.getmtime(pkpath) > 3600:
+            # delete files older than an hour
             print('deleting files in ' + pkpath)
             for f in os.listdir(pkpath):
                 os.remove(os.path.join(pkpath, f))
