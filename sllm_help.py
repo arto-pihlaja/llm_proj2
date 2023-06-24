@@ -46,8 +46,8 @@ def get_local_secrets():
           }
     return sec
 
-#sec = get_azure_secrets()
-sec = get_local_secrets()
+sec = get_azure_secrets()
+#sec = get_local_secrets()
 index_name = 'langchain-retrieval-agent'
 
 from langchain.document_loaders import TextLoader
