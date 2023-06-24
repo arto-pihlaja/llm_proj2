@@ -8,3 +8,5 @@ flask
 configparser
 requests
 tweepy
+azure-identity
+azure-keyvault-secrets
