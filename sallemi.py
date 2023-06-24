@@ -17,7 +17,7 @@ class Sallemi:
             self.emb = cd.emb
             self.define_vectorstore()
             self.conv_memory = cd.conv_memory
-            self.define_model()
+            self.llm = cd.model
             self.define_tools()
             self.agent = None  
         else:         

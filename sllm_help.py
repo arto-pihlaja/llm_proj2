@@ -145,6 +145,7 @@ class Chatdata:
         try:
             self.save_attribute('conv_memory', chat.sllm.conv_memory)
             self.save_attribute('embedder', chat.sllm.emb)
+            self.save_attribute('model', chat.sllm.llm)
         except AttributeError:
             pass # sllm not created yet
 
@@ -158,6 +159,7 @@ class Chatdata:
         try:
             self.conv_memory = self.load_attribute('conv_memory')
             self.emb = self.load_attribute('embedder')  
+            self.model = self.load_attribute('model')  
         except FileNotFoundError:
             pass # sllm not created yet
         return self      

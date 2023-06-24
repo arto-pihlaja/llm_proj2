@@ -10,7 +10,6 @@ def return_ugly_error(msg):
     <p>Error - {msg} 
     """
     return render_template('launch_error.html', msg=msg)
-    #return ugly_error
 
 chat = None
 
@@ -19,10 +18,6 @@ class Chat:
         self.prev_prompt = ''
         self.temp = 0    
         self.uid = uid    
-    
-    # def init_sllm(self):
-    #     # Sallemi retains the current agent + tools and conversation history
-    #     self.sllm = Sallemi(self.temp)
 
     def get_response(self, userText):
         prompt = userText.lower().strip()
@@ -35,11 +30,11 @@ class Chat:
                 resp = f'Thanks! I\'ve had quite enough.'                        
         else:
             if self.prev_prompt == 'have a drink' or self.prev_prompt == '':
-                # Start an agent with selected temperature
                 try:
-                    self.sllm.temp
+                    self.sllm
                 except AttributeError:
-                    self.sllm = Sallemi(self.temp)                
+                    self.sllm = Sallemi(self.temp) 
+            if self.sllm.agent == None:                                   
                 self.sllm.start_agent()              
 
             resp = self.sllm.agent(userText)
@@ -47,8 +42,11 @@ class Chat:
         self.prev_prompt = prompt
         return resp
 
-    def restore(self, cd: sh.Chatdata):        
+    def restore(self, cd: sh.Chatdata):  
+        self.uid = cd.uid      
         self.sllm = Sallemi(cd.temp, cd)
+        self.temp = cd.temp
+        self.prev_prompt = cd.prev_prompt        
         return self
 
 from flask import Flask, render_template, request, session, redirect, url_for
@@ -67,33 +65,7 @@ def index():
         ret = render_template("login.html")
     else:
         ret = render_template("index.html")  
-    return ret
-        # try:
-        #     global chat
-        #     cd = sh.Chatdata(uid)
-        #     if chat == None:
-        #         chat = Chat(uid)
-        #         chat.init_sllm()                
-        #         cd.persist(chat)
-        #     elif chat.uid != uid:
-        #         try:
-        #             chat = Chat(uid)
-        #             chat = chat.restore(cd.retrieve_chatdata())
-        #         except FileNotFoundError:
-        #             # Theres's no previous chat for this uid. Create a new one.
-        #             chat = Chat(uid)
-        #             chat.init_sllm()                
-        #             cd.persist(chat)
-        #     ret = render_template("index.html")
-        # except PineconeException as e:
-        #     print('Sorry, Pinecone is not behaving')        
-        #     ret = return_ugly_error(e.__str())
-        # except PicklingError:
-        #     pass            
-        # except FileNotFoundError:
-
-        #     ret = return_ugly_error('Sorry, cannot find files')
-    
+    return ret    
 
 @app.route('/login', methods=['GET', 'POST'] )
 # https://pythonbasics.org/flask-sessions/
@@ -132,8 +104,7 @@ def get_bot_response():
                 chat = chat.restore(cd.retrieve_chatdata())
         except FileNotFoundError:
         # No persisted chat found. Create new chat.
-            chat = Chat(uid)
-            # chat.init_sllm()                                
+            chat = Chat(uid)                              
 
         userText = request.args.get('msg')
         res = chat.get_response(userText)            
