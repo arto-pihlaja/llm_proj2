@@ -114,7 +114,7 @@ def get_bot_response():
         res = return_ugly_error("Sorry, couldn't find your chat context.")    
     return res
 
-        
+sh.confirm_pickle_folder()        
 sh.cleanup_pickles()
 
 
