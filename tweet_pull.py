@@ -6,14 +6,7 @@ import tweepy
 import configparser
 tweeter_handle = '@SamSammeli'
 
-def bearer_oauth(r):
-    """
-    Method required by bearer token authentication.
-    """
 
-    r.headers["Authorization"] = f"Bearer {bearer_token}"
-    r.headers["User-Agent"] = "v2FilteredStreamPython"
-    return r
 config = configparser.ConfigParser()
 config.read('config.ini')
 api_key = config['twitter']['api_key']
