@@ -34,8 +34,7 @@ class Chat:
                 except AttributeError:
                     self.sllm = Sallemi(self.temp) 
             
-            if self.sllm.agent == None:            
-                self.sllm.start_agent()              
+            self.sllm.start_agent()              
 
             resp = self.sllm.agent(userText)
             resp = resp['output'] 
