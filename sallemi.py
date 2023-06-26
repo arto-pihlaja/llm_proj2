@@ -20,6 +20,7 @@ class Sallemi:
                 self.conv_memory = cd.conv_memory
                 self.llm = cd.model
                 self.define_tools() 
+                self.agent = None
             else:         
                 self.temp = temp
                 self.emb = sh.Embedder()
@@ -27,6 +28,7 @@ class Sallemi:
                 self.create_conversation_memory()
                 self.define_model()
                 self.define_tools()
+                self.agent = None
         except AttributeError: 
             #incorrect cd
             self.temp = temp
@@ -35,6 +37,7 @@ class Sallemi:
             self.create_conversation_memory()
             self.define_model()
             self.define_tools()
+            self.agent = None
 
     def restore(self, cd: sh.Chatdata):
         self.temp = cd.temp
