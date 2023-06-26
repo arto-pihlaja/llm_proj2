@@ -41,7 +41,7 @@ class Chat:
                 resp = resp['output'] 
             except HttpError as e:
                 resp = 'Sorry, Google API call failed' 
-                print(f'\nError from Google API:\t {str(e._get_reason())}\n')                
+                print(f'\nError from Google API:\t {str(e.__str__())}\n')                
             except TypeError:
                 resp = 'Sorry, API call failed' 
         self.prev_prompt = prompt
