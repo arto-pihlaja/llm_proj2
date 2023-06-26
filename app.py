@@ -38,9 +38,11 @@ class Chat:
             self.sllm.start_agent()              
             try:
                 resp = self.sllm.agent(userText)
+                resp = resp['output'] 
             except HttpError:
-                resp = 'Sorry, Google API call failed'
-            resp = resp['output'] 
+                resp = 'Sorry, Google API call failed' 
+            except TypeError:
+                resp = 'Sorry, API call failed' 
         self.prev_prompt = prompt
         return resp
 
