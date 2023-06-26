@@ -103,10 +103,12 @@ class Sallemi:
         )
 
     def start_agent(self):
-        # Create the agent that uses the LLM, memory and tool
+        # Create the agent that uses the LLM, memory and tool.
         from langchain.agents import initialize_agent
+        from langchain.agents.agent_types import AgentType
         self.agent = initialize_agent(
-            agent='chat-conversational-react-description',
+            # agent='chat-conversational-react-description',
+            agent = AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
             tools=self.tools,
             llm=self.llm,
             verbose=True,
