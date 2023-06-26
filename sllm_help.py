@@ -120,8 +120,8 @@ def create_pinecone_index():
     # https://docs.pinecone.io/docs/langchain-retrieval-agent
 
     pinecone.init(
-        api_key=PC_API_KEY,
-        environment=PC_ENV
+        api_key=sec.get('pc_api_key'),
+        environment=sec.get('pc_env')
     )
     if index_name not in pinecone.list_indexes():
         pinecone.create_index(

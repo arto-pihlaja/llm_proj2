@@ -97,7 +97,7 @@ def get_bot_response():
                     # The chat currently in memory does not match this session uid. Get the right chat context.
                     chat = chat.restore(cd.retrieve_chatdata())
                 else:
-                    # all good, proceed to getting response
+                    # All good, proceed to getting response
                     pass
             else:
                 chat = Chat(uid)
