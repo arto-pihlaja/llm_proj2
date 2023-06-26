@@ -1,3 +1,4 @@
+from googleapiclient.errors import HttpError
 from sallemi import Sallemi, sh
 from pinecone import PineconeException
 from uuid import uuid4
@@ -35,8 +36,10 @@ class Chat:
                     self.sllm = Sallemi(self.temp) 
             
             self.sllm.start_agent()              
-
-            resp = self.sllm.agent(userText)
+            try:
+                resp = self.sllm.agent(userText)
+            except HttpError:
+                resp = 'Sorry, Google API call failed'
             resp = resp['output'] 
         self.prev_prompt = prompt
         return resp
